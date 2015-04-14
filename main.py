@@ -1,29 +1,14 @@
 from pro import *
 
-from stairs import SimpleStairs
+from lib.metro import *
 
 height = param(10)
-platformHeight = param(2)
-railwayWidth = param(3)
-
-entranceWidth = 6
+entranceWidth = param(6)
 
 
 @rule
 def Begin():
-	extrude(height,
-		left >> Side(),
-		right >> Side(),
-		front >> Wall(),
-		back >> Wall(),
-		top >> delete(),
-		bottom >> split(y,
-			railwayWidth >> Way(),
-			flt() >> extrude(platformHeight, top>>Platform()),
-			railwayWidth >> Way()
-		),
-		interior = True
-	)
+	StationHall(height, Wall(), Wall(), Side(), Side(), Platform())
 
 
 @rule
@@ -66,51 +51,14 @@ def Wall():
 
 
 @rule
-def Way():
-	split(y,
-		flt(),
-		0.1 >> Rail(),
-		0.3,
-		1.5 >> WayPit(),
-		0.3,
-		0.1 >> Rail(),
-		flt()
-	)
-
-
-@rule
-def WayPit():
-	color("222222")
-	extrude(-0.5)
-
-
-@rule
-def Rail():
-	color("eeeeee")
-	extrude(0.2)
-
-
-@rule
 def Side():
 	split(x,
-		railwayWidth >> Tunnel(),
-		flt() >> split(x,
-			flt(),
-			rel(0.8) >> split(y,
-				platformHeight >> delete(),
-				rel(0.6) >> EntranceToPlatform(),
-				flt() >> delete()
-			),
-			flt()
+		flt(),
+		rel(0.8) >> split(y,
+			platformHeight >> delete(),
+			rel(0.6) >> EntranceToPlatform(),
+			flt() >> delete()
 		),
-		railwayWidth >> Tunnel()
-	)
-
-
-@rule
-def Tunnel():
-	split(y,
-		rel(0.8) >> delete(),
 		flt()
 	)
 
@@ -128,12 +76,6 @@ def EntranceToPlatform():
 		axis = y,
 		symmetric = False
 	)
-
-
-@rule
-def Steps(_stepsLength):
-	_stepsHeight = shape().size()[1]
-	SimpleStairs(_stepsLength/_stepsHeight*0.1, 0.1, texture("MarekFootway0007.jpg", 0.6, 0.3), keepSides=False)
 
 
 @rule
@@ -159,19 +101,6 @@ def PedestrianSubway():
 		last >> delete(),
 		cap2 >> delete(),
 		cap1 >> texture("MarekFootway0007.jpg", 0.6, 0.3),
-		symmetric = False,
-		relativeCoord1 = False
-	)
-
-
-@rule
-def Entrance(stepsLength=10, stepsHeight=5, entranceLength=5):
-	extrude2(
-		0, -stepsLength >> delete(),
-		stepsHeight, -stepsLength >> SimpleStairs(stepsLength/stepsHeight*0.1, 0.1, texture("MarekFootway0007.jpg", 0.6, 0.3), keepSides=False),
-		stepsHeight, -stepsLength + entranceLength >> inset(0, 1, 1, 1, cap>>delete(), side>>extrude(-1)),
-		last >> delete(),
-		axis = y,
 		symmetric = False,
 		relativeCoord1 = False
 	)
