@@ -14,7 +14,7 @@ def Begin():
 @rule
 def Platform():
 	texture("MarekFootway0007.jpg", 0.6, 0.3)
-	split(y,
+	split(x,
 		3,
 		3 >> Columns(),
 		flt(),
@@ -25,7 +25,7 @@ def Platform():
 
 @rule
 def Columns():
-	split(x,
+	split(y,
 		4,
 		repeat(
 			3 >> Column(),
